@@ -10,12 +10,12 @@ import About from './about'
 import Counter from './counter'
 import Stars from './stars'
 
-const style = require('./style.css')
+const styles = require('./style.css')
 
 export default class App extends React.Component {
   render() {
     return (
-      <section className={style.AppContainer}>
+      <section className={styles.appContainer}>
         <Helmet {...appConfig.app} {...appConfig.app.head}/>
         <Header />
         <Switch>

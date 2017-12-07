@@ -2,7 +2,7 @@ import * as React from 'react'
 import { observer, inject } from 'mobx-react'
 import Store from 'store'
 
-const style = require('./style.css')
+const styles = require('./style.css')
 
 interface IProps {
   store?: Store
@@ -19,8 +19,8 @@ export default class Stars extends React.Component<IProps> {
     const { store } = this.props
 
     return (
-      <div className={style.Stars}>
-        {store.stars.isFetching ? 'Fetching Stars' : store.stars.count}
+      <div className={styles.stars}>
+        { store.stars.isFetching ? 'Fetching Stars' : store.stars.count }
       </div>
     )
   }

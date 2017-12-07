@@ -7,7 +7,6 @@ var ManifestPlugin = require('webpack-manifest-plugin');
 var CheckerPlugin = require('awesome-typescript-loader').CheckerPlugin;
 
 var config = {
-  // Enable sourcemaps for debugging webpack's output.
   devtool: 'source-map',
 
   resolve: {
@@ -30,11 +29,7 @@ var config = {
   },
 
   module: {
-    rules: [{
-        enforce: 'pre',
-        test: /\.(ts|tsx)?$/,
-        loader: 'tslint-loader'
-      },
+    rules: [
       {
         test: /\.(ts|tsx)?$/,
         loaders: ['react-hot-loader/webpack', 'awesome-typescript-loader']
@@ -89,9 +84,6 @@ var config = {
     new webpack.LoaderOptionsPlugin({
       debug: true,
       options: {
-        tslint: {
-          failOnHint: true
-        },
         postcss: function () {
           return [
             postcssNext(),
@@ -104,12 +96,6 @@ var config = {
     }),
     new ManifestPlugin({
       fileName: '../manifest.json'
-    }),
-    new webpack.DefinePlugin({
-      'process.env': {
-        BROWSER: JSON.stringify(true),
-        NODE_ENV: JSON.stringify('development')
-      }
     }),
     new webpack.HotModuleReplacementPlugin()
   ]

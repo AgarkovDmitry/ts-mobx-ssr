@@ -31,11 +31,7 @@ var config = {
   },
 
   module: {
-    rules: [{
-        enforce: 'pre',
-        test: /\.(ts|tsx)?$/,
-        loader: 'tslint-loader'
-      },
+    rules: [
       {
         test: /\.(ts|tsx)?$/,
         loader: 'awesome-typescript-loader'
@@ -92,9 +88,6 @@ var config = {
     new webpack.LoaderOptionsPlugin({
       debug: true,
       options: {
-        tslint: {
-          failOnHint: true
-        },
         postcss: function () {
           return [
             postcssNext(),
@@ -120,12 +113,6 @@ var config = {
     new ManifestPlugin({
       fileName: '../manifest.json'
     }),
-    new webpack.DefinePlugin({
-      'process.env': {
-        BROWSER: JSON.stringify(true),
-        NODE_ENV: JSON.stringify('production')
-      }
-    })
   ]
 };
 

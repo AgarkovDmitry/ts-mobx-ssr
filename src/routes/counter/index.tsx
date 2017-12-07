@@ -2,7 +2,7 @@ import * as React from 'react'
 import { observer, inject } from 'mobx-react'
 import Store from 'store'
 
-const style = require('./style.css')
+const styles = require('./style.css')
 
 interface IProps {
   store?: Store
@@ -15,7 +15,7 @@ export default class Counter extends React.Component<IProps> {
     const { store } = this.props
 
     return (
-      <div className={style.Counter}>
+      <div className={styles.counter}>
         <h4>Counter Example</h4>
         <button
           name='incBtn'
