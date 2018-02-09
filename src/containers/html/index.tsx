@@ -11,7 +11,7 @@ interface IHtmlProps {
 
 export default class Html extends React.Component<IHtmlProps> {
   resolve(files) {
-    return files.map(src => !this.props.manifest[src] && '/public/' + this.props.manifest[src]).filter(file => file)
+    return files.map(src => this.props.manifest[src] && '/public/' + this.props.manifest[src]).filter(file => file)
   }
 
   render() {
