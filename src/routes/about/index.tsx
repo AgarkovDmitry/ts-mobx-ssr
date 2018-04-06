@@ -6,6 +6,7 @@ export default class About extends React.Component {
     return (
       <div className={styles.about}>
         <h4>About</h4>
+        <input type='text' onKeyPress={e => console.log(e.key)}/>
       </div>
     )
   }

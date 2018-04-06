@@ -11,7 +11,6 @@ import Store from 'store'
 
 import Html from 'containers/html'
 const manifest = require('../build/manifest.json')
-
 const express = require('express')
 const path = require('path')
 const compression = require('compression')
@@ -21,9 +20,11 @@ const app = express()
 
 app.use(compression())
 
+console.log(process.env.NODE_ENV)
+
 if (process.env.NODE_ENV !== 'production') {
   const webpack = require('webpack')
-  const webpackConfig = require('../config/webpack/dev')
+  const webpackConfig = require('../webpack.dev')
   const webpackCompiler = webpack(webpackConfig)
 
   app.use(require('webpack-dev-middleware')(webpackCompiler, {
@@ -34,7 +35,7 @@ if (process.env.NODE_ENV !== 'production') {
     inline: true,
     lazy: false,
     historyApiFallback: true,
-    quiet: true,
+    quiet: true
   }))
 
   app.use(require('webpack-hot-middleware')(webpackCompiler))
@@ -55,14 +56,18 @@ app.get('*', async(req, res) => {
       <StaticRouter location={req.url} context={context}>
         <Routes/>
       </StaticRouter>
-    </Provider>,
+    </Provider>
   )
   if (context.url) {
     res.writeHead(302, { Location: context.url })
     res.end()
   }
   else {
-    res.status(200).send(renderHTML(markup, store))
+    const html = ReactDOMServer.renderToString(
+      <Html markup={markup} manifest={manifest} store={store} initPage={ store.initPage(req.url) }/>
+    )
+
+    res.status(200).send(`<!doctype html> ${html}`)
   }
 })
 
@@ -74,10 +79,3 @@ app.listen(appConfig.port, appConfig.host, (err) => {
     console.info(`\n\n Listening at http://${appConfig.host}:${appConfig.port}\n`)
 })
 
-function renderHTML(markup: string, store: any) {
-  const html = ReactDOMServer.renderToString(
-    <Html markup={markup} manifest={manifest} store={store} />,
-  )
-
-  return `<!doctype html> ${html}`
-}

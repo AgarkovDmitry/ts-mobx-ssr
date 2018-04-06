@@ -7,11 +7,14 @@ interface IHtmlProps {
   manifest?: any
   markup?: string
   store?: Store
+  children?: JSX.Element
+  initPage?: string
 }
 
 export default class Html extends React.Component<IHtmlProps> {
   resolve(files) {
-    return files.map(src => !this.props.manifest[src] && '/public/' + this.props.manifest[src]).filter(file => file)
+    const manifest = this.props.manifest
+    return files.map(src => manifest[src] && `${manifest[src]}`).filter(file => file)
   }
 
   render() {
@@ -28,17 +31,21 @@ export default class Html extends React.Component<IHtmlProps> {
           {head.script.toComponent()}
 
           {
-            this.resolve(['vendor.css', 'app.css']).map((src, key) =>
-              <link key={key} rel='stylesheet' type='text/css' href={src} />,
+            this.resolve(['vendor.css', 'app.css', `${this.props.initPage}.css`])
+            .map((src, key) =>
+              <link key={key} rel='stylesheet' type='text/css' href={src} />
             )
           }
           <link rel='shortcut icon' href='/favicon.ico' />
         </head>
         <body>
-          <main id='app' dangerouslySetInnerHTML={{ __html: markup }} />
+          <main id='app' dangerouslySetInnerHTML={{ __html: markup }}>
+            {this.props.children}
+          </main>
           <script dangerouslySetInnerHTML={{ __html: `window.__INITIAL_STATE__=${JSON.stringify(toJS(store))};` }} charSet='UTF-8' />
           {
-            this.resolve(['vendor.js', 'app.js']).map((src, key) => 
+            this.resolve(['vendor.js', 'app.js', `${this.props.initPage}.js`])
+            .map((src, key) =>
               <script src={src} key={key}/>
             )
           }

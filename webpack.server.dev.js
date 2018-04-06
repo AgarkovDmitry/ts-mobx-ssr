@@ -1,8 +1,6 @@
 var path = require('path');
 var fs = require('fs');
 var webpack = require('webpack');
-var postcssAssets = require('postcss-assets');
-var postcssNext = require('postcss-cssnext');
 
 var nodeModules = {};
 fs.readdirSync('node_modules')
@@ -16,68 +14,40 @@ fs.readdirSync('node_modules')
 var config = {
   externals: nodeModules,
   target: 'node',
+  mode: 'development',
 
   resolve: {
     extensions: ['.ts', '.tsx', '.js', '.jsx'],
     modules: [path.resolve(__dirname), 'node_modules', 'src'],
   },
 
-  entry: './src/server.tsx',
+  entry: {
+    server: './src/server.tsx'
+  },
 
   output: {
-    path: path.resolve('./build/public'),
-    filename: '../server.js',
-    publicPath: '/public/',
+    path: path.resolve('./build'),
+    filename: 'server.js',
+    publicPath: '/',
     libraryTarget: 'commonjs2'
   },
 
   module: {
-    loaders: [{
-        test: /\.(jpe?g|png|gif)$/i,
-        loader: 'url-loader?limit=1000&name=images/[hash].[ext]'
-      },
-      {
-        test: /\.json$/,
-        loader: 'json-loader'
-      },
-      {
-        test: /\.(ts|tsx)?$/,
-        loader: 'awesome-typescript-loader',
-        exclude: /node_modules/
-      },
-      {
-        test: /\.woff(2)?(\?v=[0-9]\.[0-9]\.[0-9])?$/,
-        loader: "url-loader?limit=10000&mimetype=application/font-woff"
-      },
-      {
-        test: /\.(ttf|eot|svg)(\?v=[0-9]\.[0-9]\.[0-9])?$/,
-        loader: "file-loader"
-      },
+    rules: [
+      { test: /\.(ts|tsx)?$/, use: 'awesome-typescript-loader', exclude: /node_modules/ },
       {
         test: /\.css$/,
-        loaders: [
+        use: [
           'isomorphic-style-loader',
-          'css-loader?modules&importLoaders=2&localIdentName=[local]___[hash:base64:5]'
+          { loader: 'css-loader', options: { modules: true, importLoaders: 2, localIdentName: '[local]___[hash:base64:5]'} },
         ]
-      }
+      },
+      { test: /\.(woff|woff2|eot)(\?.*)?$/, use: 'file-loader?name=fonts/[hash].[ext]' },
+      { test: /\.ttf(\?.*)?$/, use: 'url-loader?limit=10000&mimetype=application/octet-stream&name=fonts/[hash].[ext]' },
+      { test: /\.svg(\?.*)?$/, use: 'url-loader?limit=10000&mimetype=image/svg+xml&name=fonts/[hash].[ext]' },
+      { test: /\.(jpe?g|png|gif)$/i, use: 'url-loader?limit=1000&name=images/[hash].[ext]' }
     ]
   },
-
-  plugins: [
-      new webpack.LoaderOptionsPlugin({
-        debug: false,
-        options: {
-          postcss: function () {
-            return [
-              postcssNext(),
-              postcssAssets({
-                relative: true
-              }),
-            ];
-          },
-        }
-      })
-  ],
 
   node: {
     console: false,
